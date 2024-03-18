@@ -16,18 +16,18 @@ public class Room {
     private final int maxSlots = 2;
     private Player player1;
     private Player player2;
-    private List<List<Integer>> fields;
+    private List<List<Integer>> board;
 
     public Room(String roomName) {
         this.roomName = roomName;
         this.freeSlots = maxSlots;
-        initializeFields();
+        initializeBoard();
     }
 
-    public void initializeFields() {
-        fields = new ArrayList<>(3);
+    public void initializeBoard() {
+        board = new ArrayList<>(3);
         for(int i=0; i<3; i++) {
-            fields.add(new ArrayList<>(List.of(0, 0, 0)));
+            board.add(new ArrayList<>(List.of(0, 0, 0)));
         }
     }
 }

@@ -2,12 +2,14 @@ package com.example.tic_tac_toe_backend.repository;
 
 import com.example.tic_tac_toe_backend.entity.Room;
 import com.example.tic_tac_toe_backend.utils.exception.RoomNotFoundException;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Getter
 @Component
 public class RoomRepository {
 
@@ -16,10 +18,6 @@ public class RoomRepository {
 
     public RoomRepository() {
         rooms = new ArrayList<>(List.of(new Room("room" + roomCounter++)));
-    }
-
-    public List<Room> getRooms() {
-        return rooms;
     }
 
     public void addRoom(Room room) {
@@ -47,10 +45,6 @@ public class RoomRepository {
         return rooms.stream()
                 .filter(room -> room.getFreeSlots() == 2)
                 .findFirst();
-    }
-
-    public int getRoomCounter() {
-        return roomCounter;
     }
 
     public void setRoomCounter(int roomCounter) {

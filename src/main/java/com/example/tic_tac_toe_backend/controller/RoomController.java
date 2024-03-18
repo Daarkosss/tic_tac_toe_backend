@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/rooms")
 @RequiredArgsConstructor
@@ -18,15 +21,16 @@ public class RoomController {
         return ResponseEntity.ok(boardService.getRoom(roomName));
     }
 
-    @PostMapping("/chooseRoomForPlayer")
-    public ResponseEntity<RoomDTO> chooseRoomForPlayer(@RequestParam String playerName) {
+    @PostMapping("/findRoomForPlayer")
+    public ResponseEntity<RoomDTO> findRoomForPlayer(@RequestParam String playerName) {
         return ResponseEntity.ok(boardService.chooseRoomForPlayer(playerName));
     }
 
-    @DeleteMapping("/deletePlayerFromRoom")
-    public ResponseEntity deletePlayerFromRoom(@RequestParam String roomName, @RequestParam String playerName) {
+    @DeleteMapping("/removePlayerFromRoom")
+    public ResponseEntity removePlayerFromRoom(@RequestParam String roomName, @RequestParam String playerName) {
         boardService.deletePlayerFromRoom(roomName, playerName);
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = Collections.singletonMap("message", "Player removed successfully");
+        return ResponseEntity.ok(body);
     }
 
 }

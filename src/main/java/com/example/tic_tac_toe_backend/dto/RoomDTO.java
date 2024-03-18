@@ -1,7 +1,6 @@
 package com.example.tic_tac_toe_backend.dto;
 
 
-import com.example.tic_tac_toe_backend.entity.Player;
 import com.example.tic_tac_toe_backend.entity.Room;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +18,7 @@ public class RoomDTO {
     private int freeSlots;
     private PlayerDTO player1;
     private PlayerDTO player2;
-    private List<List<Integer>> fields;
+    private List<List<Integer>> board;
 
     public static RoomDTO of(Room room) {
         return RoomDTO.builder()
@@ -28,7 +27,7 @@ public class RoomDTO {
                 .freeSlots(room.getFreeSlots())
                 .player1(room.getPlayer1() != null ? PlayerDTO.of(room.getPlayer1()) : null)
                 .player2(room.getPlayer2() != null ? PlayerDTO.of(room.getPlayer2()) : null)
-                .fields(room.getFields())
+                .board(room.getBoard())
                 .build();
     }
 

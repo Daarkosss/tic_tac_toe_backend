@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -28,7 +27,7 @@ public class GameService {
 
         makeMoveOnBoard(room, playerMove);
 
-        BoardDTO board = new BoardDTO(room.getFields());
+        BoardDTO board = new BoardDTO(room.getBoard());
 
         if(room.getPlayer1().getName().equals(playerMove.getPlayerName())) {
             simpMessagingTemplate.convertAndSend("/topic/" + room.getPlayer2().getName(), board);
@@ -47,14 +46,14 @@ public class GameService {
     }
 
     private void makeMoveOnBoard(Room room, PlayerMove playerMove) {
-        List<List<Integer>> fields = room.getFields();
+        List<List<Integer>> board = room.getBoard();
         int symbol = 1;
         if(room.getPlayer2().getName().equals(playerMove.getPlayerName())) {
             symbol = 2;
         }
 
-        fields.get(playerMove.getX()).set(playerMove.getY(), symbol);
-        room.setFields(fields);
+        board.get(playerMove.getX()).set(playerMove.getY(), symbol);
+        room.setBoard(board);
 
         Player player1 = room.getPlayer1();
         player1.setStarting(!player1.isStarting());
@@ -75,7 +74,7 @@ public class GameService {
     }
 
     private boolean checkRows(Room room) {
-        for (List<Integer> row : room.getFields()) {
+        for (List<Integer> row : room.getBoard()) {
             if (row.stream().allMatch(cell -> cell.equals(row.get(0)) && cell != 0)) {
                 sendGameOverMessage(room, row.get(0));
                 return true;
@@ -85,12 +84,12 @@ public class GameService {
     }
 
     private boolean checkColumns(Room room) {
-        List<List<Integer>> fields = room.getFields();
+        List<List<Integer>> board = room.getBoard();
         for (int columnIndex = 0; columnIndex < 3; columnIndex++) {
             final int col = columnIndex;
             if (IntStream.range(0, 3)
-                    .allMatch(rowIndex -> fields.get(rowIndex).get(col).equals(fields.get(0).get(col)) && fields.get(rowIndex).get(col) != 0)) {
-                sendGameOverMessage(room, fields.get(0).get(columnIndex));
+                    .allMatch(rowIndex -> board.get(rowIndex).get(col).equals(board.get(0).get(col)) && board.get(rowIndex).get(col) != 0)) {
+                sendGameOverMessage(room, board.get(0).get(columnIndex));
                 return true;
             }
         }
@@ -99,19 +98,19 @@ public class GameService {
 
 
     private boolean checkDiagonal(Room room) {
-        List<List<Integer>> fields = room.getFields();
+        List<List<Integer>> board = room.getBoard();
 
-        // Pierwsza przekątna
-        boolean diagonal1 = IntStream.range(0, 3).allMatch(i -> fields.get(i).get(i).equals(fields.get(0).get(0)) && fields.get(i).get(i) != 0);
+        // Pierwsza przekatna
+        boolean diagonal1 = IntStream.range(0, 3).allMatch(i -> board.get(i).get(i).equals(board.get(0).get(0)) && board.get(i).get(i) != 0);
         if (diagonal1) {
-            sendGameOverMessage(room, fields.get(0).get(0));
+            sendGameOverMessage(room, board.get(0).get(0));
             return true;
         }
 
-        // Druga przekątna
-        boolean diagonal2 = IntStream.range(0, 3).allMatch(i -> fields.get(i).get(2 - i).equals(fields.get(0).get(2)) && fields.get(i).get(2 - i) != 0);
+        // Druga przekatna
+        boolean diagonal2 = IntStream.range(0, 3).allMatch(i -> board.get(i).get(2 - i).equals(board.get(0).get(2)) && board.get(i).get(2 - i) != 0);
         if (diagonal2) {
-            sendGameOverMessage(room, fields.get(0).get(2));
+            sendGameOverMessage(room, board.get(0).get(2));
             return true;
         }
         return false;
@@ -119,16 +118,16 @@ public class GameService {
 
 
     private boolean checkDraw(Room room) {
-        int countEmptyFields = 0;
-        List<List<Integer>> fields = room.getFields();
+        int countEmptySquares = 0;
+        List<List<Integer>> board = room.getBoard();
         for(int i = 0; i < 3; i++) {
             for(int j = 0; j < 3; j++) {
-                if(fields.get(i).get(j) == 0) {
-                    countEmptyFields++;
+                if(board.get(i).get(j) == 0) {
+                    countEmptySquares++;
                 }
             }
         }
-        if(countEmptyFields == 0) {
+        if(countEmptySquares == 0) {
             sendGameOverMessage(room, 0);
             return true;
         }
@@ -136,7 +135,7 @@ public class GameService {
     }
 
     private void startNewGame(Room room) {
-        room.initializeFields();
+        room.initializeBoard();
     }
 
 

@@ -88,7 +88,7 @@ public class RoomService {
             }
             room.setPlayer2(null);
             room.setFreeSlots(1);
-            room.initializeFields();
+            room.initializeBoard();
             simpMessagingTemplate.convertAndSend("/topic/" + room.getPlayer1().getName(), new OpponentLeftMessage());
         }
     }

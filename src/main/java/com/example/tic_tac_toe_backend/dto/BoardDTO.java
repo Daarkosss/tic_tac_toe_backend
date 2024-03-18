@@ -12,10 +12,10 @@ import java.util.List;
 public class BoardDTO {
 
     private String dtype = "Board";
-    private List<List<Integer>> fields;
+    private List<List<Integer>> board;
 
-    public BoardDTO(List<List<Integer>> fields) {
-        this.fields = fields;
+    public BoardDTO(List<List<Integer>> board) {
+        this.board = board;
     }
 
 }
