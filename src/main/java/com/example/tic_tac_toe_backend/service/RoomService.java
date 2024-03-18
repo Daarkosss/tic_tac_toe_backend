@@ -21,17 +21,16 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    private boolean isPlayerAlreadyInAnyRoom(String playerName) {
+    private boolean isPlayerAlreadyInGame(String playerName) {
         return roomRepository.getRooms().stream()
                 .anyMatch(room -> room.getPlayer1() != null && room.getPlayer1().getName().equals(playerName) ||
                         room.getPlayer2() != null && room.getPlayer2().getName().equals(playerName));
     }
 
-    public RoomDTO chooseRoomForPlayer(String playerName) {
-        if (isPlayerAlreadyInAnyRoom(playerName)) {
+    public RoomDTO findRoomForPlayer(String playerName) {
+        if (isPlayerAlreadyInGame(playerName)) {
             throw new UsernameTakenException("Username " + playerName + " is already taken!");
         }
-
 
         Room room;
         Optional<Room> optionalRoom = roomRepository.getRoomWithOneFreeSlot();
@@ -73,8 +72,7 @@ public class RoomService {
     }
 
     private void sendStartGameMessageToPlayer(String playerName, Room room) {
-        log.info("Sending starting game info to /topic/" + playerName);
-        simpMessagingTemplate.convertAndSend("/topic/" + playerName, RoomDTO.of(room));
+        simpMessagingTemplate.convertAndSend("/queue/" + playerName, RoomDTO.of(room));
     }
 
     public void deletePlayerFromRoom(String roomName, String playerName) {
@@ -89,7 +87,7 @@ public class RoomService {
             room.setPlayer2(null);
             room.setFreeSlots(1);
             room.initializeBoard();
-            simpMessagingTemplate.convertAndSend("/topic/" + room.getPlayer1().getName(), new OpponentLeftGameMessage());
+            simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer1().getName(), new OpponentLeftGameMessage());
         }
     }
 

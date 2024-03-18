@@ -30,9 +30,9 @@ public class GameService {
         BoardDTO board = new BoardDTO(room.getBoard());
 
         if(room.getPlayer1().getName().equals(playerMove.getPlayerName())) {
-            simpMessagingTemplate.convertAndSend("/topic/" + room.getPlayer2().getName(), board);
+            simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer2().getName(), board);
         } else {
-            simpMessagingTemplate.convertAndSend("/topic/" + room.getPlayer1().getName(), board);
+            simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer1().getName(), board);
         }
 
         if(checkWin(room)) {
@@ -67,9 +67,9 @@ public class GameService {
 
     private void sendGameOverMessage(Room room, Integer winnerSymbol) {
         GameOverMessage gameOverMessage = new GameOverMessage(winnerSymbol == 1, false);
-        simpMessagingTemplate.convertAndSend("/topic/" + room.getPlayer1().getName(), gameOverMessage);
+        simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer1().getName(), gameOverMessage);
         gameOverMessage.setWinner(winnerSymbol == 2);
-        simpMessagingTemplate.convertAndSend("/topic/" + room.getPlayer2().getName(), gameOverMessage);
+        simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer2().getName(), gameOverMessage);
     }
 
     private boolean checkRows(Room room) {

@@ -23,7 +23,7 @@ public class RoomController {
 
     @PostMapping("/findRoomForPlayer")
     public ResponseEntity<RoomDTO> findRoomForPlayer(@RequestParam String playerName) {
-        return ResponseEntity.ok(boardService.chooseRoomForPlayer(playerName));
+        return ResponseEntity.ok(boardService.findRoomForPlayer(playerName));
     }
 
     @DeleteMapping("/removePlayerFromRoom")
