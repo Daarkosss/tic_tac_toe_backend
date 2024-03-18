@@ -66,7 +66,7 @@ public class GameService {
     }
 
     private void sendGameOverMessage(Room room, Integer winnerSymbol) {
-        GameOverMessage gameOverMessage = new GameOverMessage(winnerSymbol == 1, false);
+        GameOverMessage gameOverMessage = new GameOverMessage(winnerSymbol == 1, winnerSymbol == 0);
         simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer1().getName(), gameOverMessage);
         gameOverMessage.setWinner(winnerSymbol == 2);
         simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer2().getName(), gameOverMessage);
