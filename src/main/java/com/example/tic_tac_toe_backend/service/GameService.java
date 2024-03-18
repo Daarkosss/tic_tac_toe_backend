@@ -41,7 +41,6 @@ public class GameService {
         }
         if(checkDraw(room)){
             startNewGame(room);
-            return;
         }
     }
 
