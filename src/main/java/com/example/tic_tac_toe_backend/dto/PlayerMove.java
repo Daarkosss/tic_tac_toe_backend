@@ -9,8 +9,8 @@ public class PlayerMove {
 
     private String dtype = "PlayerMove";
     private String roomName;
-    private int x;
-    private int y;
+    private int i;
+    private int j;
     private String playerName;
 
 }

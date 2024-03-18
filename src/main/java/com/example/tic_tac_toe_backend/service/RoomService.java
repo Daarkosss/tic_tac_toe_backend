@@ -1,6 +1,6 @@
 package com.example.tic_tac_toe_backend.service;
 
-import com.example.tic_tac_toe_backend.dto.OpponentLeftMessage;
+import com.example.tic_tac_toe_backend.dto.OpponentLeftGameMessage;
 import com.example.tic_tac_toe_backend.dto.RoomDTO;
 import com.example.tic_tac_toe_backend.entity.Player;
 import com.example.tic_tac_toe_backend.entity.Room;
@@ -89,7 +89,7 @@ public class RoomService {
             room.setPlayer2(null);
             room.setFreeSlots(1);
             room.initializeBoard();
-            simpMessagingTemplate.convertAndSend("/topic/" + room.getPlayer1().getName(), new OpponentLeftMessage());
+            simpMessagingTemplate.convertAndSend("/topic/" + room.getPlayer1().getName(), new OpponentLeftGameMessage());
         }
     }
 

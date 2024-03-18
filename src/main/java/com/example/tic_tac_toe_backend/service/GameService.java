@@ -51,7 +51,7 @@ public class GameService {
             symbol = 2;
         }
 
-        board.get(playerMove.getX()).set(playerMove.getY(), symbol);
+        board.get(playerMove.getI()).set(playerMove.getJ(), symbol);
         room.setBoard(board);
 
         Player player1 = room.getPlayer1();
