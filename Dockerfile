@@ -1,31 +1,33 @@
-# Etap 1: Budowanie aplikacji
 FROM eclipse-temurin:19-jdk as builder
 
-# Ustawienie katalogu roboczego
+# Set the working directory
 WORKDIR /app
 
-# Kopiowanie plików konfiguracyjnych Mavena i pobieranie zależności
-COPY mvnw pom.xml ./
+# Copy the maven wrapper
 COPY .mvn/ .mvn
-RUN chmod +x ./mvnw && \
-    ./mvnw dependency:go-offline
+COPY mvnw pom.xml ./
+RUN chmod +x ./mvnw
 
-# Kopiowanie reszty kodu źródłowego i budowanie aplikacji
+# Download dependencies, to avoid re-downloading them on each build
+RUN ./mvnw dependency:go-offline
+
+# Copy the source code
 COPY ./src ./src
-RUN ./mvnw clean package -DskipTests && \
-    rm -rf /root/.m2
 
-# Etap 2: Uruchamianie aplikacji
+# Build the application
+RUN ./mvnw clean install -DskipTests
+
+# Second stage
 FROM eclipse-temurin:19-jre
 
-# Ustawienie katalogu roboczego
+# Set the working directory
 WORKDIR /app
 
-# Eksponowanie portu aplikacji
+# Expose the port
 EXPOSE 8080
 
-# Kopiowanie skompilowanego artefaktu z etapu budowania
+# Copy the artifact from the first stage
 COPY --from=builder /app/target/*.jar app.jar
 
-# Uruchomienie aplikacji
+# Run application
 ENTRYPOINT ["java", "-jar", "app.jar"]
