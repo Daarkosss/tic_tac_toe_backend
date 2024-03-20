@@ -1,28 +1,31 @@
+# Etap 1: Budowanie aplikacji
 FROM eclipse-temurin:19-jdk as builder
 
-# set the working directory
-WORKDIR /opt/app
+# Ustawienie katalogu roboczego
+WORKDIR /app
 
-# copy the maven wrapper files
-COPY .mvn/ .mvn
+# Kopiowanie plików konfiguracyjnych Mavena i pobieranie zależności
 COPY mvnw pom.xml ./
-RUN chmod +x ./mvnw
+COPY .mvn/ .mvn
+RUN chmod +x ./mvnw && \
+    ./mvnw dependency:go-offline
 
-# download dependencies
-RUN ./mvnw dependency:go-offline
-# copy the source code
+# Kopiowanie reszty kodu źródłowego i budowanie aplikacji
 COPY ./src ./src
+RUN ./mvnw clean package -DskipTests && \
+    rm -rf /root/.m2
 
-# build the application
-RUN ./mvnw clean install -DskipTests
-
-# second stage
+# Etap 2: Uruchamianie aplikacji
 FROM eclipse-temurin:19-jre
-# set the working directory
-WORKDIR /opt/app
-# expose the port
+
+# Ustawienie katalogu roboczego
+WORKDIR /app
+
+# Eksponowanie portu aplikacji
 EXPOSE 8080
-# copy the artifact from the first stage
-COPY --from=builder /opt/app/target/tic_tac_toe_backend-0.0.1-SNAPSHOT.jar /opt/app/tic_tac_toe_backend-0.0.1-SNAPSHOT.jar
-# set the entrypoint
-ENTRYPOINT ["java", "-jar", "/opt/app/tic_tac_toe_backend-0.0.1-SNAPSHOT.jar"]
+
+# Kopiowanie skompilowanego artefaktu z etapu budowania
+COPY --from=builder /app/target/*.jar app.jar
+
+# Uruchomienie aplikacji
+ENTRYPOINT ["java", "-jar", "app.jar"]
