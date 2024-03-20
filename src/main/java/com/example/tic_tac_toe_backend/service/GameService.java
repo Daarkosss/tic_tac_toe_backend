@@ -1,8 +1,8 @@
 package com.example.tic_tac_toe_backend.service;
 
 import com.example.tic_tac_toe_backend.dto.BoardDTO;
-import com.example.tic_tac_toe_backend.dto.GameOverMessage;
-import com.example.tic_tac_toe_backend.dto.PlayerMove;
+import com.example.tic_tac_toe_backend.dto.GameOverMessageDTO;
+import com.example.tic_tac_toe_backend.dto.MoveOnBoardDTO;
 import com.example.tic_tac_toe_backend.entity.Player;
 import com.example.tic_tac_toe_backend.entity.Room;
 import com.example.tic_tac_toe_backend.repository.RoomRepository;
@@ -21,15 +21,15 @@ public class GameService {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
 
-    public void makeMove(PlayerMove playerMove) {
+    public void makeMove(MoveOnBoardDTO moveOnBoardDTO) {
 
-        Room room = roomRepository.getRoomByName(playerMove.getRoomName());
+        Room room = roomRepository.getRoomByName(moveOnBoardDTO.getRoomName());
 
-        makeMoveOnBoard(room, playerMove);
+        makeMoveOnBoard(room, moveOnBoardDTO);
 
         BoardDTO board = new BoardDTO(room.getBoard());
 
-        if(room.getPlayer1().getName().equals(playerMove.getPlayerName())) {
+        if(room.getPlayer1().getName().equals(moveOnBoardDTO.getPlayerName())) {
             simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer2().getName(), board);
         } else {
             simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer1().getName(), board);
@@ -44,14 +44,14 @@ public class GameService {
         }
     }
 
-    private void makeMoveOnBoard(Room room, PlayerMove playerMove) {
+    private void makeMoveOnBoard(Room room, MoveOnBoardDTO moveOnBoardDTO) {
         List<List<Integer>> board = room.getBoard();
         int symbol = 1;
-        if(room.getPlayer2().getName().equals(playerMove.getPlayerName())) {
+        if(room.getPlayer2().getName().equals(moveOnBoardDTO.getPlayerName())) {
             symbol = 2;
         }
 
-        board.get(playerMove.getI()).set(playerMove.getJ(), symbol);
+        board.get(moveOnBoardDTO.getI()).set(moveOnBoardDTO.getJ(), symbol);
         room.setBoard(board);
 
         Player player1 = room.getPlayer1();
@@ -66,10 +66,10 @@ public class GameService {
     }
 
     private void sendGameOverMessage(Room room, Integer winnerSymbol) {
-        GameOverMessage gameOverMessage = new GameOverMessage(winnerSymbol == 1, winnerSymbol == 0);
-        simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer1().getName(), gameOverMessage);
-        gameOverMessage.setWinner(winnerSymbol == 2);
-        simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer2().getName(), gameOverMessage);
+        GameOverMessageDTO gameOverMessageDTO = new GameOverMessageDTO(winnerSymbol == 1, winnerSymbol == 0);
+        simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer1().getName(), gameOverMessageDTO);
+        gameOverMessageDTO.setWinner(winnerSymbol == 2);
+        simpMessagingTemplate.convertAndSend("/queue/" + room.getPlayer2().getName(), gameOverMessageDTO);
     }
 
     private boolean checkRows(Room room) {

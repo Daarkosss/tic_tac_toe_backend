@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class RoomDTO {
 
-    private String dtype = "Room";
+    private String type = "Room";
     private String roomName;
     private int freeSlots;
     private PlayerDTO player1;
@@ -22,7 +22,7 @@ public class RoomDTO {
 
     public static RoomDTO of(Room room) {
         return RoomDTO.builder()
-                .dtype("Room")
+                .type("Room")
                 .roomName(room.getRoomName())
                 .freeSlots(room.getFreeSlots())
                 .player1(room.getPlayer1() != null ? PlayerDTO.of(room.getPlayer1()) : null)

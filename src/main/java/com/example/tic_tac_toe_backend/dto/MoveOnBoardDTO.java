@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PlayerMove {
+public class MoveOnBoardDTO {
 
-    private String dtype = "PlayerMove";
+    private String type = "MoveOnBoard";
     private String roomName;
     private int i;
     private int j;

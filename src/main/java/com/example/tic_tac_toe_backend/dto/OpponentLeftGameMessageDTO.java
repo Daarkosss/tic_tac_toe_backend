@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OpponentLeftGameMessage {
+public class OpponentLeftGameMessageDTO {
 
-    private String dtype = "OpponentLeftGameMessage";
+    private String type = "OpponentLeftGameMessage";
     private String message = "Your opponent has left the game";
 
 }
