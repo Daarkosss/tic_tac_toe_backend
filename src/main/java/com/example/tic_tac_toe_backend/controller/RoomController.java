@@ -25,12 +25,4 @@ public class RoomController {
     public ResponseEntity<RoomDTO> findRoomForPlayer(@RequestParam String playerName) {
         return ResponseEntity.ok(boardService.findRoomForPlayer(playerName));
     }
-
-    @DeleteMapping("/removePlayerFromRoom")
-    public ResponseEntity removePlayerFromRoom(@RequestParam String roomName, @RequestParam String playerName) {
-        boardService.deletePlayerFromRoom(roomName, playerName);
-        Map<String, Object> body = Collections.singletonMap("message", "Player removed successfully");
-        return ResponseEntity.ok(body);
-    }
-
 }

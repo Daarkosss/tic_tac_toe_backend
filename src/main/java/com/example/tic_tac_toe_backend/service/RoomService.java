@@ -27,6 +27,14 @@ public class RoomService {
                         room.getPlayer2() != null && room.getPlayer2().getName().equals(playerName));
     }
 
+    public Room findRoomOfPlayer(String playerName) {
+        return roomRepository.getRooms().stream()
+                .filter(room -> (room.getPlayer1() != null && room.getPlayer1().getName().equals(playerName)) ||
+                        (room.getPlayer2() != null && room.getPlayer2().getName().equals(playerName)))
+                .findFirst()
+                .orElse(null);
+    }
+
     public RoomDTO findRoomForPlayer(String playerName) {
         if (isPlayerAlreadyInGame(playerName)) {
             throw new UsernameTakenException("Username " + playerName + " is already taken!");
