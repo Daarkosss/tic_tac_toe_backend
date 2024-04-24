@@ -4,14 +4,9 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.IOException;
@@ -38,26 +33,5 @@ public class CORSFilter implements Filter {
             }
             log.info("Added CORS headers to response using CORSFilter");
         }
-    }
-
-    public static class SecurityConfig {
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-            httpSecurity
-                    .csrf().disable()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
-                    .authorizeHttpRequests()
-                    .requestMatchers("/login", "/ws/**").permitAll()
-                    .anyRequest().authenticated()
-                    .and()
-                    .oauth2ResourceServer()
-                    .jwt();
-
-            return httpSecurity.build();
-
-        }
-
     }
 }
